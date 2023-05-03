@@ -1,43 +1,41 @@
+import 'package:app_webview/app_theme.dart';
+import 'package:app_webview/game_route.dart';
+import 'package:app_webview/home_route.dart';
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+  ));
+
   runApp(
     MaterialApp(
-      theme: ThemeData(useMaterial3: true),
-      home: WebViewApp(),
+      routes: <String, WidgetBuilder>{
+        '/': (BuildContext context) => const HomeRoute(),
+        '/game': (BuildContext context) => const GameRoute()
+      },
+      theme: ThemeData(
+        primaryColor: AppTheme.primary,
+        primaryColorDark: AppTheme.primaryDark,
+        accentColor: AppTheme.accent,
+        textTheme: GoogleFonts.acmeTextTheme().copyWith(
+            button: GoogleFonts.ubuntuMono(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            )),
+        buttonTheme: ButtonThemeData(
+          buttonColor: AppTheme.accent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          textTheme: ButtonTextTheme.primary,
+        ),
+      ),
     ),
   );
-}
-
-class WebViewApp extends StatefulWidget {
-  const WebViewApp({super.key});
-
-  @override
-  State<WebViewApp> createState() => _WebViewAppState();
-}
-
-class _WebViewAppState extends State<WebViewApp> {
-  late final WebViewController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(
-        Uri.parse('https://translate.google.com/?hl=vi&sl=en&tl=vi&op=docs'),
-      );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-
-      body: WebViewWidget(
-        controller: controller,
-
-      ),
-    );
-  }
 }
