@@ -25,7 +25,7 @@ class _GameRouteState extends State<GameRoute> {
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
-        Uri.parse('https://tflashgame.com/game_m/nations-league-soccer'),
+        Uri.parse('https://en.tflash.online/game_m/nations-league-soccer'),
       );
 
     // COMPLETE: Load a banner ad

@@ -62,7 +62,7 @@ class HomeRoute extends StatelessWidget {
                   padding: EdgeInsets.only(bottom: 142),
                 ),
                 const Text(
-                  "Powered by GameMonetize, Delivered by TFlash Game.\n\nGet more game at https://tflashgame.com.",
+                  "Powered by GameMonetize, Delivered by TFlash Game.\n\nGet more game at https://en.tflash.online.",
                   style: TextStyle(
                     fontSize: 16,
                   ),
