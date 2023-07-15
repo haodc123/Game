@@ -37,6 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   webview_flutter: ^4.2.0
   google_mobile_ads: ^1.2.0
+  connectivity_plus: ^2.3.0    # For check internet
 
 
 dev_dependencies:

@@ -1,15 +1,53 @@
 import 'package:tf_battle_sea/app_theme.dart';
 import 'package:flutter/material.dart';
+// For check internet
+import 'package:tf_battle_sea/network_connectivity.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 // COMPLETE: Import google_mobile_ads.dart
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class HomeRoute extends StatelessWidget {
 
-  const HomeRoute({Key? key}): super(key: key);
+  HomeRoute({Key? key}): super(key: key);
+
+  // For check internet
+  Map _source = {ConnectivityResult.none: false};
+  final NetworkConnectivity _networkConnectivity = NetworkConnectivity.instance;
+  String string = '';
 
   @override
   Widget build(BuildContext context) {
+
+    // For check internet
+    _networkConnectivity.initialise();
+    _networkConnectivity.myStream.listen((source) {
+      _source = source;
+      print('source $_source');
+      // 1.
+      switch (_source.keys.toList()[0]) {
+        case ConnectivityResult.mobile:
+          string =
+          _source.values.toList()[0] ? 'Mobile: Online' : 'Mobile: Offline';
+          break;
+        case ConnectivityResult.wifi:
+          string =
+          _source.values.toList()[0] ? 'WiFi: Online' : 'WiFi: Offline';
+          break;
+        case ConnectivityResult.none:
+        default:
+          string = 'You are offline, please turn on Internet to play game.';
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                string,
+                style: TextStyle(fontSize: 18),
+              ),
+            ),
+          );
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppTheme.primary,
       body: FutureBuilder<void>(
@@ -74,6 +112,11 @@ class HomeRoute extends StatelessWidget {
         },
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _networkConnectivity.disposeStream();
   }
 
   // COMPLETE: Change return type to Future<InitializationStatus>
