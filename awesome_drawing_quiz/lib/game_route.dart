@@ -323,7 +323,7 @@ class _GameRouteState extends State<GameRoute> implements QuizEventListener {
     setState(() {});
 
     // COMPLETE: Load an Interstitial Ad
-    if (level >= 3 && _interstitialAd == null) {
+    if (level >= 1 && _interstitialAd == null) {
       _loadInterstitialAd();
     }
   }

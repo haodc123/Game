@@ -20,8 +20,9 @@ class _GameRouteState extends State<GameRoute> {
 
   @override
   void initState() {
+    _createInterstitialAd();
     super.initState();
-
+    
     controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..loadRequest(
@@ -48,6 +49,53 @@ class _GameRouteState extends State<GameRoute> {
 
   }
 
+  // For Button click Ads
+  // bool _canShowButton = true;
+  // void toggleWidget() {
+  //   setState(() {
+  //     _canShowButton = !_canShowButton;
+  //   });
+  // }
+
+  InterstitialAd? _interstitialAd;
+  int _numInterstitialLoadAttempts = 0;
+  int maxFailedLoadAttempts = 3;
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: "ca-app-pub-7188489268015540/4226700485",
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _numInterstitialLoadAttempts = 0;
+          _showInterstitialAd();
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _numInterstitialLoadAttempts += 1;
+          _interstitialAd = null;
+          if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        ad.dispose();
+      },
+    );
+    _interstitialAd!.show();
+    _interstitialAd = null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,6 +107,31 @@ class _GameRouteState extends State<GameRoute> {
             WebViewWidget(
               controller: controller,
             ),
+            // For Button click Ads
+            // SizedBox(height: 20.0),
+            // // if the show button is false
+            // !_canShowButton
+            //     ? const SizedBox.shrink() :
+            //   Center(
+            //     // heightFactor: 3,
+            //     // widthFactor: 0.8,
+            //     child: ElevatedButton(
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: Colors.transparent,
+            //           minimumSize: const Size.fromHeight(1000),
+            //         ),
+            //         onPressed: () {
+            //           if (_interstitialAd != null) {
+            //             _interstitialAd?.show();
+            //           }
+            //           toggleWidget();
+            //         },
+            //         child: const Text(
+            //           '',
+            //           style: TextStyle(fontSize: 22),
+            //         ),
+            //       ),
+            //   ),
             // COMPLETE: Display a banner when ready
             if (_bannerAd != null)
               Align(
@@ -72,7 +145,6 @@ class _GameRouteState extends State<GameRoute> {
           ],
         ),
       ),
-
     );
 
     // return Column(
@@ -102,6 +174,7 @@ class _GameRouteState extends State<GameRoute> {
   void dispose() {
     // COMPLETE: Dispose a BannerAd object
     _bannerAd?.dispose();
+    _interstitialAd?.dispose();
 
     super.dispose();
   }
@@ -109,5 +182,6 @@ class _GameRouteState extends State<GameRoute> {
   @override
   void onClueUpdated(String clue) {
     setState(() {});
+
   }
 }

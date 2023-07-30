@@ -1,3 +1,4 @@
+// import 'package:nations_league_soccer/ad_helper.dart';
 import 'package:nations_league_soccer/app_theme.dart';
 // For check internet
 import 'package:nations_league_soccer/network_connectivity.dart';
@@ -16,8 +17,38 @@ class HomeRoute extends StatelessWidget {
   final NetworkConnectivity _networkConnectivity = NetworkConnectivity.instance;
   String string = '';
 
+  // For Ads _interstitialAd
+  // InterstitialAd? _interstitialAd;
+
+  // void _loadInterstitialAd() {
+  //   InterstitialAd.load(
+  //     adUnitId: AdHelper.interstitialAdUnitId,
+  //     request: AdRequest(),
+  //     adLoadCallback: InterstitialAdLoadCallback(
+  //       onAdLoaded: (ad) {
+  //         ad.fullScreenContentCallback = FullScreenContentCallback(
+  //           onAdDismissedFullScreenContent: (ad) {
+  //             // _moveToHome();
+  //           },
+  //         );
+  //
+  //         setState(() {
+  //           _interstitialAd = ad;
+  //         });
+  //       },
+  //       onAdFailedToLoad: (err) {
+  //         print('Failed to load an interstitial ad: ${err.message}');
+  //       },
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
+
+    // if (_interstitialAd == null) {
+    //   _loadInterstitialAd();
+    // }
 
     // For check internet
     _networkConnectivity.initialise();
@@ -74,6 +105,9 @@ class HomeRoute extends StatelessWidget {
                       primary: Theme.of(context).accentColor,
                     ),
                     onPressed: () {
+                      // if (_interstitialAd != null) {
+                      //   _interstitialAd?.show();
+                      // }
                       Navigator.of(context).pushNamed('/game');
                     },
                     child: const Padding(
@@ -117,6 +151,7 @@ class HomeRoute extends StatelessWidget {
   @override
   void dispose() {
     _networkConnectivity.disposeStream();
+    // _interstitialAd?.dispose();
   }
 
   // COMPLETE: Change return type to Future<InitializationStatus>
@@ -124,4 +159,6 @@ class HomeRoute extends StatelessWidget {
     // TODO: Initialize Google Mobile Ads SDK
     return MobileAds.instance.initialize();
   }
+
+  void setState(Null Function() param0) {}
 }
