@@ -1,0 +1,6 @@
+package com.conghaodng.gdi
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity: FlutterActivity() {
+}

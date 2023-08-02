@@ -20,6 +20,7 @@ class _GameRouteState extends State<GameRoute> {
 
   @override
   void initState() {
+    _createInterstitialAd();
     super.initState();
 
     controller = WebViewController()
@@ -46,6 +47,45 @@ class _GameRouteState extends State<GameRoute> {
       ),
     ).load();
 
+  }
+
+  InterstitialAd? _interstitialAd;
+  int _numInterstitialLoadAttempts = 0;
+  int maxFailedLoadAttempts = 3;
+
+  void _createInterstitialAd() {
+    InterstitialAd.load(
+      adUnitId: "ca-app-pub-7188489268015540/8604999007",
+      request: AdRequest(),
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (InterstitialAd ad) {
+          _interstitialAd = ad;
+          _numInterstitialLoadAttempts = 0;
+          _showInterstitialAd();
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          _numInterstitialLoadAttempts += 1;
+          _interstitialAd = null;
+          if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+            _createInterstitialAd();
+          }
+        },
+      ),
+    );
+  }
+
+  void _showInterstitialAd() {
+    if (_interstitialAd == null) {
+      print('Warning: attempt to show interstitial before loaded.');
+      return;
+    }
+    _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+      onAdDismissedFullScreenContent: (InterstitialAd ad) {
+        ad.dispose();
+      },
+    );
+    _interstitialAd!.show();
+    _interstitialAd = null;
   }
 
   @override
@@ -102,6 +142,7 @@ class _GameRouteState extends State<GameRoute> {
   void dispose() {
     // COMPLETE: Dispose a BannerAd object
     _bannerAd?.dispose();
+    _interstitialAd?.dispose();
 
     super.dispose();
   }
